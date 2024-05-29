@@ -14,7 +14,7 @@
 // Global variables
 //  Run parameters
 extern const int tau; //Correlation max-duration
-const int cycles = 5; //Number of correlation cycles
+const int cycles = 1; //Number of correlation cycles
 extern const int steps; //Monte Carlo sweeps
 extern const double T; //Temperature in units of 1/k_B
 extern const int tw; //Waiting time to start correlation calculations

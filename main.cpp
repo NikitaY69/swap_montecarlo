@@ -3,14 +3,14 @@
 namespace fs = std::experimental::filesystem;
 
 // Run parameters
-const int tau = 1000000;
-const int tw = 300000;
+const int tau = 300000;
+const int tw = 1;
 const int steps = tw*(cycles-1)+tau;
-const double T = 0.04; 
+const double T = 1; 
 std::string motherdir = "/home/allaglo/benchmarks/";
 
 // Snapshots
-const int dataPoints = 50;
+const int dataPoints = 5;
 
 // Initialization of external variables
 double X[N], Y[N], S[N], X0[N], Y0[N];
@@ -23,7 +23,7 @@ std::vector < std::vector < std::vector <int>>> nn_tw;
 int main(int argc, const char * argv[]) {
     
     // User-defined variables
-    srand(time(NULL)*1.0); //Random number generator
+    srand(45); //Random number generator
     std::string input = motherdir + argv[1];
     std::string outdir = motherdir + argv[2] + "results/";
 

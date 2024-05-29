@@ -8,9 +8,7 @@ void MC(std::string out, int ss){
     // Building snapshots list (log-spaced)
     std::vector < std::pair <double, double>> pairs;
     std::vector <double> samplePoints, twPoints;
-    int t_max;
-    if(cycles==1) t_max=steps; else t_max=tau;
-    double exponents = log10(t_max)/(ss-1);
+    double exponents = log10(tau)/(ss-1);
 
     for(int c=0; c<cycles; c++){
         for (int x = 0; x < ss; x++){
@@ -35,7 +33,9 @@ void MC(std::string out, int ss){
     // File writing
     std::ofstream log_obs, log_cfg;
     log_obs.open(out + "obs.txt");
+    log_cfg.open(out + "cfg.xy");
     log_obs << std::scientific << std::setprecision(8);
+    log_cfg << std::scientific << std::setprecision(8);
 
     for(int t = 1; t <= steps; t++){
 
@@ -65,36 +65,8 @@ void MC(std::string out, int ss){
         } 
 
         // Writing observables to text file
-        int f = std::count(samplePoints.begin(), samplePoints.end(), t*1.0);
-        if(f>0){
-            // checking if saving time
-            for(int s=0; s<f; s++){
-                // looping eventual different tws
-                int cycle = twPoints[dataCounter];
-                double FSavg = 0;
-                for(int deg = 0; deg < 90; deg++){
-                    FSavg += FS(cycle, deg);
-                }
-                if(cycles == 1){
-                    // Configs
-                    log_cfg.open(out + "cfg_" + std::to_string(t) + ".xy");
-                    log_cfg << std::scientific << std::setprecision(8);
-                    for (int i = 0; i<N; i++){
-                        log_cfg << S[i] << " " << X[i] << " " << Y[i] << std::endl;
-                    }
-                    log_cfg.close();
-                    log_obs << t << " " << VTotal()/(2*N) << " " 
-                            << MSD() << " " << FSavg/90 << " " << CB(cycle) << std::endl;
-                    // saving format: timestep Vtot MSD Fs CB 
-                    
-                } else{
-                    log_obs << t << " " << cycle << " " << FSavg/90 << " "
-                            << CB(cycle) << std::endl;
-                    // saving format: timestep Fs CB 
-                }
-                dataCounter++;
-            }  
-        }
+        log_cfg << S[451] << " " << X[233] << " " << Y[1432] << std::endl;      
+        log_obs << VTotal()/(2*N) << std::endl;          
         
         // Doing the MC
         for (int i = 0; i < N; i++){
@@ -104,7 +76,7 @@ void MC(std::string out, int ss){
 
         if((t-1)%100==0) std::cout << (t-1) << std::endl;; // Counting steps
     };
-    log_obs.close();
+    log_obs.close(), log_cfg.close();
 }
 
 //  Tries displacing one particle j by vector dr = (dx, dy)
