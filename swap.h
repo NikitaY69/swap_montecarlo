@@ -23,9 +23,9 @@ extern const int tw; //Waiting time to start correlation calculations
 const int N = 2000; //Number of particles
 const double Size = 44.721359550000003; //Size of the system
 const double sigmaMax = 1.613048; //Maximum diameter of particles
-const double rSkin = 1.25 * sigmaMax; //Radius of neighbours included in NL (e.g. 1.8)
+extern double rSkin; //Radius of neighbours included in NL (e.g. 1.8)
 const double rC = 1.25 * sigmaMax; //Cutoff radius for calculating potential
-const double rNL = pow(rC+rSkin,2); //NL radius squared
+extern double rNL; //NL radius squared
 const double deltaMax = 0.12; //Max particle displacement
 const double deltaSMax = 0.2; //Max diameter difference for swap
 const double RUpdate = pow(rSkin,2)/4; //When R2Max exceeds this, update NL

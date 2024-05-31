@@ -3,15 +3,17 @@
 namespace fs = std::experimental::filesystem;
 
 // Run parameters
-const int tau = 100000;
+const int tau = 50000;
 const int tw = 50000;
 const int cycles = 1;
 const int steps = tw*(cycles-1)+tau;
-const double T = 0.1; 
+const double T = 1; 
 std::string motherdir = "/home/allaglo/benchmarks/";
+double rSkin;
+double rNL;
 
 // Snapshots
-const int dataPoints = 50;
+const int dataPoints = 10;
 
 // Initialization of external variables
 double X[N], Y[N], S[N], X0[N], Y0[N];
@@ -24,10 +26,11 @@ std::vector < std::vector < std::vector <int>>> nn_tw;
 int main(int argc, const char * argv[]) {
     
     // User-defined variables
-    srand(time(NULL)*1.0); //Random number generator
+    srand(45128); //Random number generator
     std::string input = motherdir + argv[1];
     std::string outdir = motherdir + argv[2] + "results/";
-
+    rSkin = atof(argv[3]);
+    rNL = pow(rC+rSkin,2);
     fs::path out_path = outdir;
     if(!fs::is_directory(out_path)){
         // creating outdir if not existing
@@ -66,9 +69,8 @@ int main(int argc, const char * argv[]) {
     UpdateList();
 
     // // Do simulation with timer
-    double t0 = time(NULL); // Timer
+    // double t0 = time(NULL); // Timer
     MC(outdir, dataPoints); 
-    std::cout << "Time taken: " << (time(NULL) - t0) << "s" << std::endl; 
-    std::cout << "Done" << std::endl;
+    // std::cout << rSkin << " " << (time(NULL) - t0) << std::endl; 
     return 0;
 }

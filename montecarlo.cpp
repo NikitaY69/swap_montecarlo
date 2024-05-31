@@ -4,6 +4,7 @@
 void MC(std::string out, int ss){
     int dataCounter = 0, cycleCounter = 0;
     double deltaX[N], deltaY[N], deltaR2[N], R2Max = 0;
+    int size_shell = 0, size_cutoff = 0;
 
     // Building snapshots list (log-spaced)
     std::vector < std::pair <double, double>> pairs;
@@ -36,14 +37,16 @@ void MC(std::string out, int ss){
         endingPoints[c] = c*tw + tau;
     }
     // File writing
-    std::ofstream log_obs, log_cfg;
+    std::ofstream log_obs, log_t;
     log_obs.open(out + "obs.txt");
+    log_t.open(out + "time.txt");
     log_obs << std::scientific << std::setprecision(8);
-
+    log_t << std::scientific << std::setprecision(8);
+    double t0 = time(NULL); // Timer
     for(int t = 1; t <= steps; t++){
 
         // Updating NL
-        if((t-1) % 150 == 0) {//Change number?
+        // if((t-1) % 150 == 0) {//Change number?
             // every 150 steps we check if we need to update the NL
             for (int i = 0; i < N; i++){
                 deltaX[i] = bcs(X[i],X0[i]);
@@ -60,7 +63,7 @@ void MC(std::string out, int ss){
                     Y0[j] = Y[j];
                 }
             }
-        }
+        // }
         
         // Updating reference observables
         if((t-1)%tw == 0 && cycleCounter < cycles){
@@ -68,44 +71,51 @@ void MC(std::string out, int ss){
         } 
 
         // Writing observables to text file
+        // log_cfg << S[451] << " " << X[233] << " " << Y[1432] << std::endl;      
+        // log_obs << VTotal()/(2*N) << std::endl;   
+
         int f = std::count(samplePoints.begin(), samplePoints.end(), t*1.0);
         if(f>0){
             // checking if saving time
             for(int s=0; s<f; s++){
+                size_cutoff = 0; size_shell = 0;
                 // looping eventual different tws
                 int cycle = twPoints[dataCounter];
-                double FSavg = 0;
-                for(int deg = 0; deg < 90; deg++){
-                    FSavg += FS(cycle, deg);
+                for(int i=0;i<N;i++){
+                    size_cutoff += nearest_neighbours(i, 1.25).size();
+                    size_shell += effective_neighbours(i).size();
                 }
+                // double FSavg = 0;
+                // for(int deg = 0; deg < 90; deg++){
+                //     FSavg += FS(cycle, deg);
+                // }
                 if(cycles == 1){
                     // Configs
-                    log_cfg.open(out + "cfg_" + std::to_string(t) + ".xy");
-                    log_cfg << std::scientific << std::setprecision(8);
-                    for (int i = 0; i<N; i++){
-                        log_cfg << S[i] << " " << Xfull[i] << " " << Yfull[i] << std::endl;
-                    }
-                    log_cfg.close();
-                    log_obs << t << " " << VTotal()/(2*N) << " " 
-                            << MSD() << " " << FSavg/90 << " " << CB(cycle) << std::endl;
+                    // log_cfg.open(out + "cfg_" + std::to_string(t) + ".xy");
+                    // log_cfg << std::scientific << std::setprecision(8);
+                    // for (int i = 0; i<N; i++){
+                    //     log_cfg << S[i] << " " << Xfull[i] << " " << Yfull[i] << std::endl;
+                    // }
+                    // log_cfg.close();
+                    log_obs << t << " " << size_cutoff/N << " " << size_shell/N << std::endl;
                     // saving format: timestep Vtot MSD Fs CB 
                     
                 } else{
-                    log_obs << t << " " << cycle << " " << VTotal()/(2*N) << " " 
-                    << FSavg/90 << " " << CB(cycle) << std::endl;
+                    // log_obs << t << " " << cycle << " " << VTotal()/(2*N) << " " 
+                    // << FSavg/90 << " " << CB(cycle) << std::endl;
                     // saving format: timestep Vtot Fs CB 
                 }
                 dataCounter++;
             }  
         }
-        if (cycles > 1 && std::count(endingPoints, endingPoints+cycles, 1.0*t) > 0){
-            log_cfg.open(out + "cfg_" + std::to_string(t) + ".xy");
-            log_cfg << std::scientific << std::setprecision(8);
-            for (int i = 0; i<N; i++){
-                log_cfg << S[i] << " " << Xfull[i] << " " << Yfull[i] << std::endl;
-            }
-            log_cfg.close();
-        }
+        // if (cycles > 1 && std::count(endingPoints, endingPoints+cycles, 1.0*t) > 0){
+        //     log_cfg.open(out + "cfg_" + std::to_string(t) + ".xy");
+        //     log_cfg << std::scientific << std::setprecision(8);
+        //     for (int i = 0; i<N; i++){
+        //         log_cfg << S[i] << " " << Xfull[i] << " " << Yfull[i] << std::endl;
+        //     }
+        //     log_cfg.close();
+        // }
         // Doing the MC
         for (int i = 0; i < N; i++){
             if (ranf() > 0.2) TryDisp(i); //Displacement probability 0.8
@@ -113,8 +123,8 @@ void MC(std::string out, int ss){
         }
 
         if((t-1)%100==0) std::cout << (t-1) << std::endl;; // Counting steps
-    };
-    log_obs.close();
+    }; log_t << rSkin << " " << (time(NULL) - t0) << std::endl; 
+    log_obs.close(); log_t.close();
 }
 
 //  Tries displacing one particle j by vector dr = (dx, dy)
