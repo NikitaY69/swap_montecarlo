@@ -9,8 +9,7 @@ const int cycles = 1;
 const int steps = tw*(cycles-1)+tau;
 const double T = 1; 
 std::string motherdir = "/home/allaglo/benchmarks/";
-double rSkin;
-double rNL;
+double rSkin, rNL, RUpdate;
 
 // Snapshots
 const int dataPoints = 10;
@@ -31,6 +30,9 @@ int main(int argc, const char * argv[]) {
     std::string outdir = motherdir + argv[2] + "results/";
     rSkin = atof(argv[3]);
     rNL = pow(rC+rSkin,2);
+    RUpdate = pow(rSkin,2)/4;
+
+    std::cout << RUpdate << std::endl;
     fs::path out_path = outdir;
     if(!fs::is_directory(out_path)){
         // creating outdir if not existing

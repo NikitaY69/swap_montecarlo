@@ -28,7 +28,7 @@ const double rC = 1.25 * sigmaMax; //Cutoff radius for calculating potential
 extern double rNL; //NL radius squared
 const double deltaMax = 0.12; //Max particle displacement
 const double deltaSMax = 0.2; //Max diameter difference for swap
-const double RUpdate = pow(rSkin,2)/4; //When R2Max exceeds this, update NL
+extern double RUpdate; //When R2Max exceeds this, update NL
 const double x_max = 1.3; // maximal value of r/s for the real neighbours
 
 // Some constants
