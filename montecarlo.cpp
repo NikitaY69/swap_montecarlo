@@ -10,7 +10,7 @@ void MC(std::string out, int ss){
     std::vector < std::pair <double, double>> pairs;
     std::vector <double> samplePoints, twPoints;
     double endingPoints[cycles];
-    double exponents = log10(steps)/(ss-1);
+    double exponents = log10(tau)/(ss-1);
 
     for(int c=0; c<cycles; c++){
         for (int x = 0; x < ss; x++){
