@@ -3,7 +3,7 @@
 namespace fs = std::experimental::filesystem;
 
 // Run parameters
-const int tau = 50000;
+const int tau = 300000;
 const int tw = 50000;
 const int cycles = 1;
 const int steps = tw*(cycles-1)+tau;
